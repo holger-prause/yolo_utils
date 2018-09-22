@@ -17,6 +17,6 @@ verify_dataset.py -d &lt;datasetdir&gt; -l &lt;logfile&gt; -s
 
 All program arguments are optional and explained below:
 
--d or --dir Optional: The path to the directory containing the images and annotation files. **os.curdir** as default
--l or --logfile Optional: Path to a file that will contain the error messages. None as default. In that case errors will be print to console.
--s or --showbbox Flag: Optional: If given, the bounding box within the original image will be shown. False as default.
+* -d or --dir Optional: The path to the directory containing the images and annotation files. **os.curdir** as default
+* -l or --logfile Optional: Path to a file that will contain the error messages. None as default. In that case errors will be print to console.
+* -s or --showbbox Flag: Optional: If given, the bounding box within the original image will be shown. False as default.
