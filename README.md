@@ -1,6 +1,6 @@
 # yolo_utils
 
-Some python script for building or verifying a yolo dataset
+Some python scripts for building or verifying a yolo dataset.
 
 ## Requirments
 * Opencv and numpy for reading in the bounding boxes.
