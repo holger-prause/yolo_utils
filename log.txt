@@ -1,0 +1,6 @@
+Missing annotation file for image C:\\test\P1010045.jpg
+Missing annotation file for image C:\\test\P9180039.jpg
+Missing image file for annotation C:\\test\P9180037.txt
+Negative annotation file found: C:\\test\P1010011.txt
+Invalid bounding box: -32000 -24000 -64000 -48000 in file C:\\test\P1010044.txt
+Invalid bounding box: 320000 240000 640000 480000 in file C:\\test\P1010036.txt
