@@ -20,3 +20,24 @@ All program arguments are optional and explained below:
 * -d or --dir Optional: The path to the directory containing the images and annotation files. **os.curdir** as default
 * -l or --logfile Optional: Path to a file that will contain the error messages. None as default. In that case errors will be print to console.
 * -s or --showbbox Flag: Optional: If given, the bounding box within the original image will be shown. False as default.
+
+
+### create_dataset.py
+This creates a yolo dataset based on the voc dataset. Optionally you can merge the result with your custom dataset.
+
+* **Requirements:**
+Download the voc dataset and extract them to a folder.
+    * [http://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar](http://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar)
+    * [http://pjreddie.com/media/files/VOCtrainval_06-Nov-2007.tar](http://pjreddie.com/media/files/VOCtrainval_06-Nov-2007.tar)
+    * [http://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar](http://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar)
+
+* **Usage:**
+create_dataset.py
+
+
+
+
+    
+    
+    
+
