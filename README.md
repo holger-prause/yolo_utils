@@ -5,25 +5,38 @@ Some python scripts for building or verifying a yolo dataset.
 ## Requirments
 * Opencv and numpy for reading in the bounding boxes.
 
-  Can be installed with pip install -r requirements.txt
+  These dependencies can be installed with pip install -r requirements.txt
 
 ### verify_dataset.py
-This will scan a directory(not recursivly) for images and annotation files.Any missing images and/or annotation files are reported.
-Bounding boxes will be extracted and analyzed. It is also possible to review them.
-Any obviously wrong coordinates(leading to empty bboxes) can be detected this way.
+This script verifies a yolo dataset. Missing annotations or corrupt images will be reported.
+It is also possible to review the bounding boxes and their corresponding labels.
 
 * **Usage:**
-verify_dataset.py -d &lt;datasetdir&gt; -l &lt;logfile&gt; -s
+The following is the help output of the script.
 
-All program arguments are optional and explained below:
+```javascript
+usage: create_dataset.py [-h] -v VOCDIR [-d DATASETDIR] -t TARGET
+                         [-p POSITIVES [POSITIVES ...]]
 
-* -d or --dir Optional: The path to the directory containing the images and annotation files. **os.curdir** as default
-* -l or --logfile Optional: Path to a file that will contain the error messages. None as default. In that case errors will be print to console.
-* -s or --showbbox Flag: Optional: If given, the bounding box within the original image will be shown. False as default.
-
+optional arguments:
+  -h, --help            show this help message and exit
+  -v VOCDIR, --vocdir VOCDIR
+                        Directory containing the 'VOCdevkit' folder
+  -d DATASETDIR, --datasetdir DATASETDIR
+                        Directory containing the custom images with
+                        annotations.Working dir is default value.
+  -t TARGET, --target TARGET
+                        The directory that will contain the dataset to
+                        create.This folder must not exists and wil be created
+                        by this script.
+  -p POSITIVES [POSITIVES ...], --positives POSITIVES [POSITIVES ...]
+                        List of space separated voc labels to use as
+                        positives.See voc_info.py for more details to list the
+                        available labels.
+```
 
 ### create_dataset.py
-This creates a yolo dataset based on the voc dataset. Optionally you can merge the result with your custom dataset.
+This creates a yolo dataset based on the voc dataset.
 
 * **Requirements:**
 Download the voc dataset and extract them to a folder.
@@ -32,7 +45,48 @@ Download the voc dataset and extract them to a folder.
     * [http://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar](http://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar)
 
 * **Usage:**
-create_dataset.py
+The following is the help output of the script.
+
+```javascript
+usage: create_dataset.py [-h] -v VOCDIR [-d DATASETDIR] -t TARGET
+                         [-p POSITIVES [POSITIVES ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v VOCDIR, --vocdir VOCDIR
+                        Directory containing the 'VOCdevkit' folder
+  -d DATASETDIR, --datasetdir DATASETDIR
+                        Directory containing the custom images with
+                        annotations.Working dir is default value.
+  -t TARGET, --target TARGET
+                        The directory that will contain the dataset to
+                        create.This folder must not exists and wil be created
+                        by this script.
+  -p POSITIVES [POSITIVES ...], --positives POSITIVES [POSITIVES ...]
+                        List of space separated voc labels to use as
+                        positives.See voc_info.py for more details to list the
+                        available labels.
+```
+
+
+### voc_info.py
+This script gives some basic information about the voc dataset.
+
+* **Usage:**
+The following is the help output of the script.
+
+```javascript
+usage: voc_info.py [-h] -v VOCDIR [-l] [-i IMAGES [IMAGES ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v VOCDIR, --vocdir VOCDIR
+                        Directory containing the 'VOCdevkit' folder
+  -l, --listvoc         Lists all available labels from the voc dataset.
+  -i IMAGES [IMAGES ...], --images IMAGES [IMAGES ...]
+                        Lists the images for the given label(s).Can be either
+                        single label or space separated list of labels
+```
 
 
 

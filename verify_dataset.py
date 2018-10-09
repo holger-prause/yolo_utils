@@ -1,111 +1,120 @@
 import os
-import sys, getopt
+import sys
+import argparse
 import cv2
 import numpy as np
 
-dataSetDir = os.curdir
+def getPath(path, configRoot):
+    if(os.path.isabs(path)):
+        return path
+    return os.path.join(configRoot, path)
 
-def isImage(path):
-    if(os.path.isfile(os.path.join(dataSetDir, path)) and path.lower().endswith((".jpg", ".jpeg"))):
-        return True
-    return False
+def verifyImage(imgPath, showBbox, labels, logs):
+    if(not os.path.isfile(imgPath)):
+        logs.append("Missing cv2Image {}".format(os.path.abspath(imgPath)))
+        return
 
-def isAnnotationFile(path):
-    if(os.path.isfile(os.path.join(dataSetDir, path)) and path.lower().endswith((".txt"))):
-        return True
-    return False
+    parentDir = os.path.abspath(os.path.join(imgPath, os.pardir))
+    imgId = os.path.splitext(os.path.basename(imgPath))[0]
+    annotationFilePath = os.path.join(parentDir, imgId+".txt")
 
-def stripExtension(path):
-    return os.path.splitext(path)[0]
+    if(not os.path.isfile(annotationFilePath)):
+        logs.append("Missing annotation file {}".format(os.path.abspath(annotationFilePath)))
+        return
 
-def findImagePath(images, annotation):
-    for image in images:
-        if(stripExtension(image) == stripExtension(annotation)):
-            return image
-    return None
+    with open(annotationFilePath) as annotationFile:
+        lines = annotationFile.read().splitlines()
+
+        #regardless if bboxes will be shown or not - try to read in the image to see if its corrupt
+        cv2Image = cv2.imread(imgPath)
+        if (np.shape(cv2Image) == ()):
+            logs.append("Can not read cv2Image {}".format(imgPath))
+            return
+
+        for line in lines:
+            line = line.split(" ")
+            labelIdx = int(line[0])
+            labelText = labels[labelIdx]
+            imHeight = np.shape(cv2Image)[0]
+            imWidth = np.shape(cv2Image)[1]
+            centerX = int(float(line[1]) * imWidth)
+            centerY = int(float(line[2]) * imHeight)
+            w = int(float(line[3]) * imWidth)
+            h = int(float(line[4]) * imHeight)
+            x = int(centerX - w / 2)
+            y = int(centerY - h / 2)
+
+            try:
+                bboxImage = cv2Image[y:y+h, x:x+w]
+                if(bboxImage.shape == (0,0,3)):
+                    raise ValueError("Invalid bounding box")
+                if showBbox:
+                    cv2.putText(cv2Image, labelText, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,0,255), lineType=cv2.LINE_AA)
+                    cv2.rectangle(cv2Image,(x,y),(x+w,y+h),(0,255,0),1)
+
+            except:
+                logs.append("Invalid bounding box: {} {} {} {} in file {}".format(x,y,w,h, annotationFilePath))
+
+        if(showBbox):
+            title = os.path.basename(imgPath) + "  from  " + os.path.basename(annotationFilePath)
+            cv2.imshow(title, cv2Image)
+            cv2.waitKeyEx()
+            cv2.destroyWindow(title)
 
 def main():
-    global dataSetDir
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--outfile", type=str, default=None,
+                        help="Path to a file that will contain the error messages. None is the default value."
+                             "In that case errors will be print to console.")
+    parser.add_argument("-s", "--showbbox", action="store_true",
+                        help="Flag. If specified, the bounding boxes within the original image will be shown."
+                             "False is the default value.")
+    parser.add_argument("-c", "--config", type=str, default="obj.data",
+                        help="Yolo training config file. Will contain the references to the label and train/val files."
+                             "obj.data is the default value")
+    args = parser.parse_args()
+
+
     logs = []
-    argv = sys.argv[1:]
-    showBbox = False
-    logFile = None
-    try:
-        opts, args = getopt.getopt(argv,"d:l:s",["dir=","logfile=","showbbox"])
-        for opt, arg in opts:
-            if opt in ("-d", "--dir"):
-                dataSetDir = arg
-            elif opt in ("-l", "--logfile"):
-                logFile = arg
-            elif opt in ("-s", "--showbbox"):
-                showBbox = True
-    except getopt.GetoptError:
-        print("verify_dataset.py -d <datasetdir> -l <logfile> -s")
+    logFile = args.outfile
+    if(logFile != None and not os.path.isfile(logFile)):
+        print("Log file", os.path.abspath(logFile), "does not exits or is no file.")
         sys.exit(2)
 
-    annotations = list(filter(isAnnotationFile, os.listdir(dataSetDir)))
-    strippedAnnotations = list(map(stripExtension, annotations))
+    configFilePath = args.config
+    if(not os.path.isfile(configFilePath)):
+        print("config file", os.path.abspath(configFilePath), "does not exits or is no file.")
+        sys.exit(2)
+    configFileRootPath = os.path.abspath(os.path.join(configFilePath, os.pardir))
 
-    images = list(filter(isImage, os.listdir(dataSetDir)))
-    strippedImages = list(map(stripExtension, images))
+    showBbox = args.showbbox
+    config = {}
 
-    #images with no annotation
-    invalidImages = []
-    for image in images:
-        if(stripExtension(image) not in strippedAnnotations):
-            invalidImages.append(image)
-            logs.append("Missing annotation file for image {}".format(os.path.join(dataSetDir, image)))
+    with open(configFilePath) as configFile:
+        configLines = configFile.readlines()
+        for line in configLines:
+            splittedLine = line.split(":", 1)
+            key = splittedLine[0].strip()
+            value = splittedLine[1].strip()
+            config[key] = value
 
-    #annotations with no image
-    invalidAnnotations = []
-    for annotation in annotations:
-        #check if corresponding file exist
-        if(stripExtension(annotation) not in strippedImages):
-            invalidAnnotations.append(annotation)
-            logs.append("Missing image file for annotation {}".format(os.path.join(dataSetDir, annotation)))
+    labels = []
+    with open(getPath(config["names"], configFileRootPath)) as labelFile:
+        labels = labelFile.read().splitlines()
 
-    annotations = list(set(annotations) - set(invalidAnnotations))
-    images = list(set(images) - set(invalidImages))
-    assert(len(annotations) == len(images))
+    trainImages = []
+    with open(getPath(config["train"], configFileRootPath)) as trainFile:
+        trainImages = trainFile.read().splitlines()
 
-    #check for valid bounding box
-    for annotation in annotations:
-        with open(os.path.join(dataSetDir, annotation)) as f:
-            #check for negatives - may be intended
-            lines = list(filter(str.strip, f.readlines()))
-            if(len(lines) == 0):
-                logs.append("Negative annotation file found: {}".format(os.path.join(dataSetDir, annotation)))
-            for line in lines:
-                line = line.split(" ")
+    validationImages = []
+    with open(getPath(config["valid"], configFileRootPath)) as validationFile:
+        validationImages = validationFile.read().splitlines()
 
-                #find the corresponding image and read it in as numpy array
-                imagePath = os.path.join(dataSetDir, findImagePath(images, annotation))
-                image = cv2.imread(imagePath)
-                if np.shape(image) == ():
-                    logs.append("Can not read image {}".format(imagePath))
-                    continue
+    for img in trainImages:
+        verifyImage(getPath(img, configFileRootPath), showBbox, labels, logs)
 
-                imHeight = np.shape(image)[0]
-                imWidth = np.shape(image)[1]
-                centerX = int(float(line[1]) * imWidth)
-                centerY = int(float(line[2]) * imHeight)
-                w = int(float(line[3]) * imWidth)
-                h = int(float(line[4]) * imHeight)
-                x = int(centerX - w / 2)
-                y = int(centerY - h / 2)
-
-                try:
-                    bboxImage = image[y:y+h, x:x+w]
-                    if(bboxImage.shape == (0,0,3)):
-                        raise ValueError("Invalid bounding box")
-                    elif showBbox:
-                        title = imagePath + "  from  " + os.path.join(dataSetDir, annotation)
-                        cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),1)
-                        cv2.imshow(title, image)
-                        cv2.waitKey(0)
-                        cv2.destroyWindow(title)
-                except:
-                    logs.append("Invalid bounding box: {} {} {} {} in file {}".format(x,y,w,h, os.path.join(dataSetDir, annotation)))
+    for img in validationImages:
+        verifyImage(getPath(img, configFileRootPath), showBbox, labels, logs)
 
     logs = "\n".join(logs)
     if(logFile != None):

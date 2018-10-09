@@ -1,59 +1,12 @@
 import os
 import sys
 import argparse
-import xml.etree.ElementTree as ET
 import shutil
 import src.voc_constants as vc
+import src.voc_util as vu
 
 
-def isValidDir(dir):
-    return (os.path.exists(dir) and os.path.isdir(dir))
-
-
-def isValidFile(file):
-    return (os.path.exists(file) and os.path.isfile(file))
-
-
-def convertBBox(size, box):
-    dw = 1. / size[0]
-    dh = 1. / size[1]
-    x = (box[0] + box[1]) / 2.0
-    y = (box[2] + box[3]) / 2.0
-    w = box[1] - box[0]
-    h = box[3] - box[2]
-    x = x * dw
-    w = w * dw
-    y = y * dh
-    h = h * dh
-    return (x, y, w, h)
-
-
-def convertAnnotation(src, target, positives):
-    srcFile = open(src)
-    targetFile = open(target, 'w')
-    tree = ET.parse(srcFile)
-    root = tree.getroot()
-    size = root.find('size')
-    w = int(size.find('width').text)
-    h = int(size.find('height').text)
-
-    for obj in root.iter('object'):
-        difficult = obj.find('difficult').text
-        cls = obj.find('name').text
-        if cls not in positives or int(difficult) == 1:
-            continue
-        cls_id = positives.index(cls)
-        xmlbox = obj.find('bndbox')
-        b = (float(xmlbox.find('xmin').text), float(xmlbox.find('xmax').text), float(xmlbox.find('ymin').text),
-             float(xmlbox.find('ymax').text))
-        bb = convertBBox((w, h), b)
-        targetFile.write(str(cls_id) + " " + " ".join([str(a) for a in bb]) + '\n')
-
-    srcFile.close()
-    targetFile.close()
-
-
-def createVocDataSet(vocDir, targetDir, vocLabels):
+def createVocDataSet(vocDir, targetDir, vocLabels,  includeNegatives=True):
     os.mkdir(targetDir)
     os.mkdir("%s/backup" % (targetDir))
 
@@ -94,22 +47,26 @@ def createVocDataSet(vocDir, targetDir, vocLabels):
         for idx, imgId in enumerate(imgIds):
             srcImg = ("%s/%s.jpg") % (imgInDir, imgId)
             targetImg = ("%s/%s.jpg") % (imgOutDir, imgId)
-            shutil.copyfile(srcImg, targetImg)
-
             srcAnnotation = (vocInPart + "/Annotations/%s.xml") % (vocDir, year, imgId)
             targetAnnotation = '%s/%s.txt' % (imgOutDir, imgId)
-            convertAnnotation(srcAnnotation, targetAnnotation, vocLabels)
 
-            if (image_set == "val"):
-                validationListFile.write(os.path.abspath(targetImg) + "\n")
-            else:
-                trainListFile.write(os.path.abspath(targetImg) + "\n")
-            print("processed entry %s of %s." % (idx, len(imgIds)))
+            #get the matching bounding boxes for the specified classes/labels
+            yoloClassInfos = vu.getYoloClassInfo(srcAnnotation, vocLabels)
+            if(includeNegatives or len(yoloClassInfos) > 0):
+                with open(targetAnnotation, "w") as targetAnnotationFile:
+                    for yci in yoloClassInfos:
+                        labelIdx = vocLabels.index(yci["label"])
+                        bb = yci["bbox"]
+                        targetAnnotationFile.write(str(labelIdx) + " " + " ".join([str(a) for a in bb]) + '\n')
+                shutil.copyfile(srcImg, targetImg)
+                if (image_set == "val"):
+                    validationListFile.write(os.path.abspath(targetImg) + "\n")
+                else:
+                    trainListFile.write(os.path.abspath(targetImg) + "\n")
 
-    trainListFile.close()
-    validationListFile.close()
-    return
-
+        trainListFile.close()
+        validationListFile.close()
+        return
 
 
 def main():
@@ -119,11 +76,11 @@ def main():
                         help="Directory containing the custom images with annotations."
                              "Working dir is default.")
     parser.add_argument("-t", "--target", type=str, required=True,
-                        help="The directory that will contain the dataset to create.")
+                        help="The directory that will contain the dataset to create."
+                             "This folder must not exists and wil be created by this script. ")
     parser.add_argument("-p", "--positives", nargs='+', default=vc.vocLabels,
                         help="List of space separated voc labels to use as positives."
                              "See voc_info.py for more details to list the available labels.")
-
 
     args = parser.parse_args()
     targetDir = args.target

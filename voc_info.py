@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 import src.voc_constants as vc
-
+import src.voc_util as vu
 
 def main():
     parser = argparse.ArgumentParser()
@@ -21,30 +21,32 @@ def main():
             print(label)
         sys.exit()
 
+    sampleCount = 0
+    imagePaths = []
     if (imageLabels):
         invalidLabels = set(imageLabels) - set(vc.vocLabels)
         if (len(invalidLabels) > 0):
             print("Invalid labels found: ", invalidLabels)
             sys.exit(-1)
 
-        imagePaths = []
-        for label in imageLabels:
-            for year, image_set in vc.vocDataSets:
-                statsFilePath = ("%s/VOCdevkit/VOC%s/ImageSets/Main/%s_%s.txt") % (vocDir, year, label, image_set)
-                if (os.path.isfile(statsFilePath)):
-                    with open(statsFilePath) as statsFile:
-                        lines = statsFile.readlines();
-                        for line in lines:
-                            splittedLine = line.split()
-                            if (splittedLine[1] == "1"):
-                                imageId = splittedLine[0]
-                                imagePath = ("%s/VOCdevkit/VOC%s/JPEGImages/%s.jpg") % (vocDir, year, imageId)
-                                imagePaths.append(imagePath)
+        vocInPart = "%s/VOCdevkit/VOC%s"
+        for year, image_set in vc.vocDataSets:
+            if(not os.path.exists(vocInPart % (vocDir, year))):
+                continue
 
-        for imagePath in imagePaths:
-            print(imagePath)
-
+            statsFilePath = (vocInPart + "/ImageSets/Main/%s.txt") % (vocDir, year, image_set)
+            with open(statsFilePath) as statsFile:
+                imgIds = statsFile.read().strip().split()
+                for imgId in imgIds:
+                    annotationFilePath = (vocInPart + "/Annotations/%s.xml") % (vocDir, year, imgId)
+                    classInfo = vu.getYoloClassInfo(annotationFilePath, imageLabels)
+                    if(len(classInfo) > 0):
+                        sampleCount = sampleCount + 1
+                        imagePath = ("%s/VOCdevkit/VOC%s/JPEGImages/%s.jpg") % (vocDir, year, imgId)
+                        imagePaths.append(imagePath)
+        print(len(imgIds))
     sys.exit()
+
 
 if __name__ == "__main__":
     main()
