@@ -15,24 +15,21 @@ It is also possible to review the bounding boxes and their corresponding labels.
 The following is the help output of the script.
 
 ```javascript
-usage: create_dataset.py [-h] -v VOCDIR [-d DATASETDIR] -t TARGET
-                         [-p POSITIVES [POSITIVES ...]]
+usage: verify_dataset.py [-h] [-o OUTFILE] [-s] [-c CONFIG]
 
 optional arguments:
   -h, --help            show this help message and exit
-  -v VOCDIR, --vocdir VOCDIR
-                        Directory containing the 'VOCdevkit' folder
-  -d DATASETDIR, --datasetdir DATASETDIR
-                        Directory containing the custom images with
-                        annotations.Working dir is default value.
-  -t TARGET, --target TARGET
-                        The directory that will contain the dataset to
-                        create.This folder must not exists and wil be created
-                        by this script.
-  -p POSITIVES [POSITIVES ...], --positives POSITIVES [POSITIVES ...]
-                        List of space separated voc labels to use as
-                        positives.See voc_info.py for more details to list the
-                        available labels.
+  -o OUTFILE, --outfile OUTFILE
+                        Path to a file that will contain the error messages.
+                        None is the default value.In that case errors will be
+                        print to console.
+  -s, --showbbox        Flag. If specified, the bounding boxes within the
+                        original image will be shown.False is the default
+                        value.
+  -c CONFIG, --config CONFIG
+                        Yolo training config file. Will contain the references
+                        to the label and train/val files.obj.data is the
+                        default value
 ```
 
 ### create_dataset.py
