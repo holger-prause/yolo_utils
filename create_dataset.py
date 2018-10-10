@@ -105,7 +105,7 @@ def main():
     if (os.path.exists(targetDir)):
         print( "File or directory \"%s\" already exists - make sure the target directory does not exists and can be created."%(targetDir))
         sys.exit()
-    createVocDataSet(vocDir, targetDir, args.positives, imageIdsToIgnore, False)
+    createVocDataSet(vocDir, targetDir, args.positives, imageIdsToIgnore)
 
 if __name__ == "__main__":
     main()
