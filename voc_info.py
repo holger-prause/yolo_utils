@@ -44,7 +44,7 @@ def main():
                         sampleCount = sampleCount + 1
                         imagePath = ("%s/VOCdevkit/VOC%s/JPEGImages/%s.jpg") % (vocDir, year, imgId)
                         imagePaths.append(imagePath)
-        print(len(imgIds))
+        print("\n".join(imagePaths))
     sys.exit()
 
 
