@@ -49,7 +49,7 @@ The following is the help output of the script.
 
 ```javascript
 usage: create_dataset.py [-h] -v VOCDIR [-d DATASETDIR] -t TARGET
-                         [-p POSITIVES [POSITIVES ...]]
+                         [-p POSITIVES [POSITIVES ...]] [-i IGNORE]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -57,7 +57,7 @@ optional arguments:
                         Directory containing the 'VOCdevkit' folder
   -d DATASETDIR, --datasetdir DATASETDIR
                         Directory containing the custom images with
-                        annotations.Working dir is default value.
+                        annotations.Working dir is default.
   -t TARGET, --target TARGET
                         The directory that will contain the dataset to
                         create.This folder must not exists and wil be created
@@ -66,6 +66,10 @@ optional arguments:
                         List of space separated voc labels to use as
                         positives.See voc_info.py for more details to list the
                         available labels.
+  -i IGNORE, --ignore IGNORE
+                        Path to a file containing image ids which will be not
+                        included.See voc_info.py on how to list image ids for
+                        a given label.
 ```
 
 
@@ -84,8 +88,8 @@ optional arguments:
                         Directory containing the 'VOCdevkit' folder
   -l, --listvoc         Lists all available labels from the voc dataset.
   -i IMAGES [IMAGES ...], --images IMAGES [IMAGES ...]
-                        Lists the images for the given label(s).Can be either
-                        single label or space separated list of labels
+                        Lists the image ids for the given label(s).Can be
+                        either single label or space separated list of labels
 ```
 
 

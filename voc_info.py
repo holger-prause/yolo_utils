@@ -9,7 +9,7 @@ def main():
     parser.add_argument("-v", "--vocdir", type=str, required=True, help="Directory containing the 'VOCdevkit' folder")
     parser.add_argument("-l", "--listvoc", action='store_true',
                         help="Lists all available labels from the voc dataset.")
-    parser.add_argument("-i", "--images", nargs='+', help="Lists the images for the given label(s)."
+    parser.add_argument("-i", "--images", nargs='+', help="Lists the image ids for the given label(s)."
                                                          "Can be either single label or space separated list of labels")
 
     args = parser.parse_args()
@@ -21,8 +21,7 @@ def main():
             print(label)
         sys.exit()
 
-    sampleCount = 0
-    imagePaths = []
+    imageIds = []
     if (imageLabels):
         invalidLabels = set(imageLabels) - set(vc.vocLabels)
         if (len(invalidLabels) > 0):
@@ -41,10 +40,8 @@ def main():
                     annotationFilePath = (vocInPart + "/Annotations/%s.xml") % (vocDir, year, imgId)
                     classInfo = vu.getYoloClassInfo(annotationFilePath, imageLabels)
                     if(len(classInfo) > 0):
-                        sampleCount = sampleCount + 1
-                        imagePath = ("%s/VOCdevkit/VOC%s/JPEGImages/%s.jpg") % (vocDir, year, imgId)
-                        imagePaths.append(imagePath)
-        print("\n".join(imagePaths))
+                        imageIds.append(imgId)
+        print("\n".join(imageIds))
     sys.exit()
 
 

@@ -6,7 +6,7 @@ import src.voc_constants as vc
 import src.voc_util as vu
 
 
-def createVocDataSet(vocDir, targetDir, vocLabels,  includeNegatives=True):
+def createVocDataSet(vocDir, targetDir, vocLabels,  imageIdsToIgnore, includeNegatives=True):
     os.mkdir(targetDir)
     os.mkdir("%s/backup" % (targetDir))
 
@@ -40,11 +40,14 @@ def createVocDataSet(vocDir, targetDir, vocLabels,  includeNegatives=True):
             continue
         elif(not os.path.exists(imgOutDir)):
             os.makedirs(imgOutDir)
-        print("processing %s_%s" % (year, image_set))
 
         # convert the xml annotations to txt(yolo format)
         imgIds = open((vocInPart + "/ImageSets/Main/%s.txt") % (vocDir, year, image_set)).read().strip().split()
         for idx, imgId in enumerate(imgIds):
+            print("processing entry %s of %s for dataset %s_%s" % (idx, len(imgIds), year, image_set))
+            if(imgId in imageIdsToIgnore):
+                continue
+
             srcImg = ("%s/%s.jpg") % (imgInDir, imgId)
             targetImg = ("%s/%s.jpg") % (imgOutDir, imgId)
             srcAnnotation = (vocInPart + "/Annotations/%s.xml") % (vocDir, year, imgId)
@@ -64,10 +67,9 @@ def createVocDataSet(vocDir, targetDir, vocLabels,  includeNegatives=True):
                 else:
                     trainListFile.write(os.path.abspath(targetImg) + "\n")
 
-        trainListFile.close()
-        validationListFile.close()
-        return
-
+    trainListFile.close()
+    validationListFile.close()
+    return
 
 def main():
     parser = argparse.ArgumentParser()
@@ -81,15 +83,29 @@ def main():
     parser.add_argument("-p", "--positives", nargs='+', default=vc.vocLabels,
                         help="List of space separated voc labels to use as positives."
                              "See voc_info.py for more details to list the available labels.")
+    parser.add_argument("-i", "--ignore", type=str, default=None,
+                        help="Path to a file containing image ids which will be not included."
+                             "See voc_info.py on how to list image ids for a given label.")
 
     args = parser.parse_args()
     targetDir = args.target
     vocDir = args.vocdir
+    ignoreFilePath = args.ignore
+    imageIdsToIgnore = []
+
+    if (ignoreFilePath != None):
+        if (not os.path.exists(ignoreFilePath)):
+            print( "Could not find ignore file \"%s\" make sure the file exists.."%(ignoreFilePath))
+            sys.exit()
+        else:
+            with open(ignoreFilePath) as ignoreFile:
+                imageIdsToIgnore = ignoreFile.read().splitlines()
+
 
     if (os.path.exists(targetDir)):
         print( "File or directory \"%s\" already exists - make sure the target directory does not exists and can be created."%(targetDir))
         sys.exit()
-    createVocDataSet(vocDir, targetDir, args.positives)
+    createVocDataSet(vocDir, targetDir, args.positives, imageIdsToIgnore, False)
 
 if __name__ == "__main__":
     main()
