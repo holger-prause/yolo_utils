@@ -6,7 +6,7 @@ import src.voc_constants as vc
 import src.voc_util as vu
 
 
-def createVocDataSet(vocDir, targetDir, vocLabels,  imageIdsToIgnore, includeNegatives=True):
+def createVocDataSet(vocDir, targetDir, vocLabels,  imageIdsToIgnore, skipNegatives):
     os.mkdir(targetDir)
     os.mkdir("%s/backup" % (targetDir))
 
@@ -55,7 +55,7 @@ def createVocDataSet(vocDir, targetDir, vocLabels,  imageIdsToIgnore, includeNeg
 
             #get the matching bounding boxes for the specified classes/labels
             yoloClassInfos = vu.getYoloClassInfo(srcAnnotation, vocLabels)
-            if(includeNegatives or len(yoloClassInfos) > 0):
+            if(not skipNegatives or len(yoloClassInfos) > 0):
                 with open(targetAnnotation, "w") as targetAnnotationFile:
                     for yci in yoloClassInfos:
                         labelIdx = vocLabels.index(yci["label"])
@@ -86,11 +86,16 @@ def main():
     parser.add_argument("-i", "--ignore", type=str, default=None,
                         help="Path to a file containing image ids which will be not included."
                              "See voc_info.py on how to list image ids for a given label.")
+    parser.add_argument("-s", "--skipnegatives", action="store_true",
+                        help="Flag determining if negatives should be included or not."
+                             "If specified - negatives will not be created."
+                             "Default value is False.")
 
     args = parser.parse_args()
     targetDir = args.target
     vocDir = args.vocdir
     ignoreFilePath = args.ignore
+    skipNegatives = args.skipnegatives
     imageIdsToIgnore = []
 
     if (ignoreFilePath != None):
@@ -105,7 +110,7 @@ def main():
     if (os.path.exists(targetDir)):
         print( "File or directory \"%s\" already exists - make sure the target directory does not exists and can be created."%(targetDir))
         sys.exit()
-    createVocDataSet(vocDir, targetDir, args.positives, imageIdsToIgnore)
+    createVocDataSet(vocDir, targetDir, args.positives, imageIdsToIgnore, skipNegatives)
 
 if __name__ == "__main__":
     main()

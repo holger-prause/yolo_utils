@@ -49,7 +49,7 @@ The following is the help output of the script.
 
 ```javascript
 usage: create_dataset.py [-h] -v VOCDIR [-d DATASETDIR] -t TARGET
-                         [-p POSITIVES [POSITIVES ...]] [-i IGNORE]
+                         [-p POSITIVES [POSITIVES ...]] [-i IGNORE] [-u]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -70,6 +70,8 @@ optional arguments:
                         Path to a file containing image ids which will be not
                         included.See voc_info.py on how to list image ids for
                         a given label.
+  -u, --usenegatives    Flag determining if negatives should be included or
+                        not.
 ```
 
 
