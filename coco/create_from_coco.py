@@ -88,7 +88,7 @@ with open(yoloClassesPath, 'w') as yoloClassesFile:
 
 print("processing %s images" % (len(imgIds)))
 for idx, imgId in enumerate(imgIds):
-    print("processing %s out of %s images" %(idx, len(imgIds)) )
+    print("processing %s out of %s images" %(idx+1, len(imgIds)) )
     img = coco.imgs[imgId]
     anns = coco.imgToAnns[imgId]
     anns = [ann for ann in anns if ann['category_id'] in catIds]
