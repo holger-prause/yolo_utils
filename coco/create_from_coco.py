@@ -78,7 +78,7 @@ catIds = coco.getCatIds(classes)
 imgIds = coco.getImgIds([], catIds)
 
 if (excludeIms):
-    imgIds = [x for x in imgIds if x in filterIds]
+    imgIds = [x for x in imgIds if x not in filterIds]
 elif filterIds:
     imgIds = filterIds
 
