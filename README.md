@@ -1,6 +1,10 @@
 # yolo_utils
 
-Some python scripts for building or verifying a yolo dataset.
+A collection of python scripts for building a yolo dataset.
+In the **voc** and **coco** folder you will find create scripts 
+which allows you to specify the classes to use.
+
+This project is mainly for myself.
 
 ## Requirments
 * Opencv and numpy for reading in the bounding boxes.
@@ -32,69 +36,26 @@ optional arguments:
                         default value
 ```
 
-### create_dataset.py
-This creates a yolo dataset based on the voc dataset.
+### add_class.py
+Allows you to shift the index in the annotation files. Usefull when adding a new class.
 
-* **Requirements:**
-Download the voc dataset and extract them to a folder.
-    * [http://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar](http://pjreddie.com/media/files/VOCtrainval_11-May-2012.tar)
-    * [http://pjreddie.com/media/files/VOCtrainval_06-Nov-2007.tar](http://pjreddie.com/media/files/VOCtrainval_06-Nov-2007.tar)
-    * [http://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar](http://pjreddie.com/media/files/VOCtest_06-Nov-2007.tar)
 
 * **Usage:**
 The following is the help output of the script.
 
 ```javascript
-usage: create_dataset.py [-h] -v VOCDIR [-d DATASETDIR] -t TARGET
-                         [-p POSITIVES [POSITIVES ...]] [-i IGNORE] [-u]
+usage: add_class.py [-h] -d DIR -a AMOUNT -i INDEX
 
 optional arguments:
   -h, --help            show this help message and exit
-  -v VOCDIR, --vocdir VOCDIR
-                        Directory containing the 'VOCdevkit' folder
-  -d DATASETDIR, --datasetdir DATASETDIR
-                        Directory containing the custom images with
-                        annotations.Working dir is default.
-  -t TARGET, --target TARGET
-                        The directory that will contain the dataset to
-                        create.This folder must not exists and wil be created
-                        by this script.
-  -p POSITIVES [POSITIVES ...], --positives POSITIVES [POSITIVES ...]
-                        List of space separated voc labels to use as
-                        positives.See voc_info.py for more details to list the
-                        available labels.
-  -i IGNORE, --ignore IGNORE
-                        Path to a file containing image ids which will be not
-                        included.See voc_info.py on how to list image ids for
-                        a given label.
-  -u, --usenegatives    Flag determining if negatives should be included or
-                        not.
+
+required arguments:
+  -d DIR, --dir DIR     Directory containing the images and annotation
+  -a AMOUNT, --amount AMOUNT
+                        How many classes to add. This will shift all indices
+                        starting at the start index with the given amount.
+  -i INDEX, --index INDEX
+                        The class start index
 ```
-
-
-### voc_info.py
-This script gives some basic information about the voc dataset.
-
-* **Usage:**
-The following is the help output of the script.
-
-```javascript
-usage: voc_info.py [-h] -v VOCDIR [-l] [-i IMAGES [IMAGES ...]]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -v VOCDIR, --vocdir VOCDIR
-                        Directory containing the 'VOCdevkit' folder
-  -l, --listvoc         Lists all available labels from the voc dataset.
-  -i IMAGES [IMAGES ...], --images IMAGES [IMAGES ...]
-                        Lists the image ids for the given label(s).Can be
-                        either single label or space separated list of labels
-```
-
-
-
-
-    
-    
     
 

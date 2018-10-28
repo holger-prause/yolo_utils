@@ -1,12 +1,16 @@
 import os
 import sys
 import argparse
+
 import src.voc_constants as vc
 import src.voc_util as vu
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-v", "--vocdir", type=str, required=True, help="Directory containing the 'VOCdevkit' folder")
+    requiredArguments = parser.add_argument_group("required arguments")
+    requiredArguments.add_argument("-v", "--vocdir", type=str, required=True, help="Directory containing the 'VOCdevkit' folder")
+
     parser.add_argument("-l", "--listvoc", action='store_true',
                         help="Lists all available labels from the voc dataset.")
     parser.add_argument("-i", "--images", nargs='+', help="Lists the image ids for the given label(s)."
