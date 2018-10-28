@@ -14,7 +14,7 @@ def createVocDataSet(vocDir, targetDir, vocLabels,  filterImIds, excludeIms, ski
     validationListFile = open("%s/valid.txt" % (targetDir), "w")
 
     with open("%s/obj.names" % (targetDir), "w") as configFile:
-        configFile.write("\\n".join(vocLabels))
+        configFile.write("\n".join(vocLabels))
 
     cfg = {
         "classes": len(vocLabels),
