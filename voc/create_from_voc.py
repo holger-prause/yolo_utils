@@ -26,7 +26,7 @@ def createVocDataSet(vocDir, targetDir, vocLabels,  filterImIds, excludeIms, ski
 
     with open("%s/obj.data" % (targetDir), "w") as configFile:
         for key in cfg:
-            line = "%s : %s \\n" % (key, cfg[key])
+            line = "%s : %s \n" % (key, cfg[key])
             configFile.write(line)
 
     # iterate the sub datasets
@@ -61,12 +61,12 @@ def createVocDataSet(vocDir, targetDir, vocLabels,  filterImIds, excludeIms, ski
                     for yci in yoloClassInfos:
                         labelIdx = vocLabels.index(yci["label"])
                         bb = yci["bbox"]
-                        targetAnnotationFile.write(str(labelIdx) + " " + " ".join([str(a) for a in bb]) + '\\n')
+                        targetAnnotationFile.write(str(labelIdx) + " " + " ".join([str(a) for a in bb]) + '\n')
                 shutil.copyfile(srcImg, targetImg)
                 if (image_set == "val"):
-                    validationListFile.write(os.path.abspath(targetImg) + "\\n")
+                    validationListFile.write(os.path.abspath(targetImg) + "\n")
                 else:
-                    trainListFile.write(os.path.abspath(targetImg) + "\\n")
+                    trainListFile.write(os.path.abspath(targetImg) + "\n")
 
     trainListFile.close()
     validationListFile.close()
