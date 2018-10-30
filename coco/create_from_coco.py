@@ -53,7 +53,7 @@ if (not os.path.exists(sourceDir)):
     sys.exit()
 
 targetDir = args.targetdir
-targetImgDir = os.path.join(targetDir, 'images')
+targetImgDir = os.path.join(targetDir, 'img')
 if (not os.path.exists(targetDir)):
     os.mkdir(targetDir)
 if (not os.path.exists(targetImgDir)):
