@@ -141,11 +141,8 @@ class COCO:
     def getCatNames(self):
         return [x['name'] for x in self.cats.values()]
 
-    def getStats(self, catNms=[]):
-        catNms = catNms if _isArrayLike(catNms) else [catNms]
+    def getStats(self):
         cats = self.dataset['categories']
-        cats = cats if len(catNms) == 0 else [cat for cat in cats if cat['name'] in catNms]
-
         stats = []
         totalObjects = 0
         for cat in cats:
@@ -154,7 +151,6 @@ class COCO:
 
             imgIds = self.getImgIds([], cat['id'])
             catStat['imageCount'] = len(imgIds)
-
 
             objectCount = 0
             for imgId in imgIds:
@@ -167,5 +163,6 @@ class COCO:
 
         total = dict()
         total['totalObjects'] = totalObjects
+        total['totalImages'] = len(self.imgs)
         stats.append(total)
         return stats

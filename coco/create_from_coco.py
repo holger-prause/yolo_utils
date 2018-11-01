@@ -39,6 +39,7 @@ parser.add_argument("-i", "--imageidfile", type=str, required=False,
                          "Per default images will be included, using the -e option excludes them.")
 parser.add_argument("-e", "--exclude", action="store_true",
                     help="If specified, images listed in the image id file will be excluded instead of included.")
+
 args = parser.parse_args()
 
 annotationFile = args.annotationfile
@@ -54,10 +55,17 @@ if (not os.path.exists(sourceDir)):
 
 targetDir = args.targetdir
 targetImgDir = os.path.join(targetDir, 'img')
+targetPosImgDir = os.path.join(targetImgDir, 'positives')
+targetNegImgDir = os.path.join(targetImgDir, 'negatives')
+
 if (not os.path.exists(targetDir)):
     os.mkdir(targetDir)
 if (not os.path.exists(targetImgDir)):
     os.mkdir(targetImgDir)
+if (not os.path.exists(targetPosImgDir)):
+    os.mkdir(targetPosImgDir)
+if (not os.path.exists(targetNegImgDir)):
+    os.mkdir(targetNegImgDir)
 
 imIdPath = args.imageidfile
 filterIds = []
@@ -75,12 +83,22 @@ if (not classes):
     classes = coco.getCatNames()
 
 catIds = coco.getCatIds(classes)
-imgIds = coco.getImgIds([], catIds)
+imgIds = coco.getImgIds()
 
 if (excludeIms):
     imgIds = [x for x in imgIds if x not in filterIds]
 elif filterIds:
     imgIds = filterIds
+
+#only create negatives from categories which occur togther with the positives
+negCatIds = set()
+for imgId in imgIds:
+    anns = coco.imgToAnns[imgId]
+    posAnns = [ann for ann in anns if ann['category_id'] in catIds]
+    negAnns = [ann for ann in anns if ann['category_id'] not in catIds]
+    if posAnns and negAnns:
+        for negAnn in negAnns:
+            negCatIds.add(negAnn['category_id'])
 
 yoloClassesPath = os.path.join(targetDir, "classes.txt")
 with open(yoloClassesPath, 'w') as yoloClassesFile:
@@ -91,17 +109,28 @@ for idx, imgId in enumerate(imgIds):
     print("processing %s out of %s images" %(idx+1, len(imgIds)) )
     img = coco.imgs[imgId]
     anns = coco.imgToAnns[imgId]
-    anns = [ann for ann in anns if ann['category_id'] in catIds]
 
-    srcImg = os.path.join(sourceDir, img['file_name'])
-    targetImg = os.path.join(targetImgDir, img['file_name'])
-    shutil.copyfile(srcImg, targetImg)
-    imBase = os.path.splitext(img['file_name'])[0]
-    yoloAnnPath = os.path.join(targetImgDir, imBase + ".txt")
-    with open(yoloAnnPath, "w") as yoloAnnFile:
-        for ann in anns:
-            catId = ann['category_id']
-            catName = coco.cats[catId]['name']
-            clIdx = classes.index(catName)
-            yoloBox = convertBBox(img, ann['bbox'])
-            yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')
+    posAnns = [ann for ann in anns if ann['category_id'] in catIds]
+    negAnns = [ann for ann in anns if ann['category_id'] not in catIds and ann['category_id'] in negCatIds]
+    include = len(posAnns) > 0 or len(negAnns) > 0
+
+    if(include):
+        srcImg = os.path.join(sourceDir, img['file_name'])
+        imBase = os.path.splitext(img['file_name'])[0]
+        #determine if positive or negative
+        yoloAnnPath = ""
+        if posAnns:
+            yoloAnnPath = os.path.join(targetPosImgDir, imBase + ".txt")
+            targetImg = os.path.join(targetPosImgDir, img['file_name'])
+        else:
+            yoloAnnPath = os.path.join(targetNegImgDir, imBase + ".txt")
+            targetImg = os.path.join(targetNegImgDir, img['file_name'])
+        shutil.copyfile(srcImg, targetImg)
+
+        with open(yoloAnnPath, "w") as yoloAnnFile:
+            for ann in posAnns:
+                catId = ann['category_id']
+                catName = coco.cats[catId]['name']
+                clIdx = classes.index(catName)
+                yoloBox = convertBBox(img, ann['bbox'])
+                yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')
