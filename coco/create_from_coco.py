@@ -77,7 +77,6 @@ if (imIdPath):
         lines = imIdFile.readlines()
         filterIds = [int(x) for x in lines if x.strip().isdigit()]
 
-excludeIms = args.exclude
 coco = co.COCO(annotationFile)
 if (not classes):
     classes = coco.getCatNames()
@@ -85,7 +84,7 @@ if (not classes):
 catIds = coco.getCatIds(classes)
 imgIds = coco.getImgIds()
 
-if (excludeIms):
+if (args.exclude):
     imgIds = [x for x in imgIds if x not in filterIds]
 elif filterIds:
     imgIds = filterIds
