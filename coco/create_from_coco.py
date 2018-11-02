@@ -102,34 +102,36 @@ for imgId in imgIds:
 yoloClassesPath = os.path.join(targetDir, "classes.txt")
 with open(yoloClassesPath, 'w') as yoloClassesFile:
     yoloClassesFile.write("\n".join(classes))
-
 print("processing %s images" % (len(imgIds)))
-for idx, imgId in enumerate(imgIds):
-    print("processing %s out of %s images" %(idx+1, len(imgIds)) )
-    img = coco.imgs[imgId]
-    anns = coco.imgToAnns[imgId]
 
-    posAnns = [ann for ann in anns if ann['category_id'] in catIds]
-    negAnns = [ann for ann in anns if ann['category_id'] not in catIds and ann['category_id'] in negCatIds]
-    include = len(posAnns) > 0 or len(negAnns) > 0
+with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
+    for idx, imgId in enumerate(imgIds):
+        print("processing %s out of %s images" %(idx+1, len(imgIds)) )
+        img = coco.imgs[imgId]
+        anns = coco.imgToAnns[imgId]
 
-    if(include):
-        srcImg = os.path.join(sourceDir, img['file_name'])
-        imBase = os.path.splitext(img['file_name'])[0]
-        #determine if positive or negative
-        yoloAnnPath = ""
-        if posAnns:
-            yoloAnnPath = os.path.join(targetPosImgDir, imBase + ".txt")
-            targetImg = os.path.join(targetPosImgDir, img['file_name'])
-        else:
-            yoloAnnPath = os.path.join(targetNegImgDir, imBase + ".txt")
-            targetImg = os.path.join(targetNegImgDir, img['file_name'])
-        shutil.copyfile(srcImg, targetImg)
+        posAnns = [ann for ann in anns if ann['category_id'] in catIds]
+        negAnns = [ann for ann in anns if ann['category_id'] not in catIds and ann['category_id'] in negCatIds]
+        include = len(posAnns) > 0 or len(negAnns) > 0
 
-        with open(yoloAnnPath, "w") as yoloAnnFile:
-            for ann in posAnns:
-                catId = ann['category_id']
-                catName = coco.cats[catId]['name']
-                clIdx = classes.index(catName)
-                yoloBox = convertBBox(img, ann['bbox'])
-                yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')
+        if(include):
+            srcImg = os.path.join(sourceDir, img['file_name'])
+            imBase = os.path.splitext(img['file_name'])[0]
+            #determine if positive or negative
+            yoloAnnPath = ""
+            if posAnns:
+                yoloAnnPath = os.path.join(targetPosImgDir, imBase + ".txt")
+                targetImg = os.path.join(targetPosImgDir, img['file_name'])
+            else:
+                yoloAnnPath = os.path.join(targetNegImgDir, imBase + ".txt")
+                targetImg = os.path.join(targetNegImgDir, img['file_name'])
+            shutil.copyfile(srcImg, targetImg)
+            trainListFile.write(os.path.abspath(targetImg)+"\n")
+
+            with open(yoloAnnPath, "w") as yoloAnnFile:
+                for ann in posAnns:
+                    catId = ann['category_id']
+                    catName = coco.cats[catId]['name']
+                    clIdx = classes.index(catName)
+                    yoloBox = convertBBox(img, ann['bbox'])
+                    yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')

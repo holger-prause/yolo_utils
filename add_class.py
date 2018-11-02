@@ -17,8 +17,8 @@ amount = int(args.amount)
 files = os.listdir(imgDir)
 for file in files:
     baseName = os.path.splitext(file)[0]
-    extension = os.path.splitext(file)[1]
-    if extension == ".jpg":
+    extension = os.path.splitext(file)[1].lower()
+    if extension == ".jpg" or extension == ".jpeg":
         annOldPath = os.path.join(imgDir, baseName+".txt")
         if(not os.path.exists(annOldPath)):
             print("no annotation file for", file)
