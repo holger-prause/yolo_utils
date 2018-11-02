@@ -90,7 +90,7 @@ def main():
                              "Per default images will be included, using the -e option excludes them.")
     parser.add_argument("-e", "--exclude", action="store_true",
                         help="If specified, images listed in the image id file will be excluded instead of included.")
-    parser.add_argument("-s", "--skipnegatives", action="store_true",
+    parser.add_argument("-s", "--skipnegatives", action="store_true", default=False,
                         help="Flag determining if negatives should be included or not."
                              "If specified - negatives will not be created."
                              "Default value is False.")
