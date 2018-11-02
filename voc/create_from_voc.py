@@ -26,13 +26,13 @@ def createVocDataSet(vocDir, targetDir, vocLabels,  filterImIds, excludeIms, ski
 
     with open("%s/obj.data" % (targetDir), "w") as configFile:
         for key in cfg:
-            line = "%s : %s \n" % (key, cfg[key])
+            line = "%s=%s \n" % (key, cfg[key])
             configFile.write(line)
 
     # iterate the sub datasets
     for year, image_set in vc.vocDataSets:
         imgInDir = (vocInPart + "/JPEGImages") % (vocDir, year)
-        imgOutDir = (vocInPart + "/JPEGImages") % (targetDir, year)
+        imgOutDir = (vocInPart + "/img") % (targetDir, year)
 
         if(not os.path.exists(vocInPart % (vocDir, year))):
             print("dataset", vocInPart % (vocDir, year), "does not exists - skipping")
