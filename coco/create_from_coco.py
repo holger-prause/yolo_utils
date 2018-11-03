@@ -7,6 +7,8 @@ import shutil
 
 def convertBBox(img, cocoBbox):
     # turn bbox into yolo format- bbox center relative to img width and height
+
+    #voc formar x,y,w,h
     dw = 1. / img['width']
     dh = 1. / img['height']
 
@@ -114,6 +116,12 @@ with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
         negAnns = [ann for ann in anns if ann['category_id'] not in catIds and ann['category_id'] in negCatIds]
         include = len(posAnns) > 0 or len(negAnns) > 0
 
+        #one of the annotated images has 0 height - deal with it
+        invalidBBoxes = [x for x in posAnns if x['bbox'][2] == 0 or x['bbox'][3] == 0]
+        if(invalidBBoxes):
+            print("invalid bbox found for img", imgId, "skipping")
+            continue
+
         if(include):
             srcImg = os.path.join(sourceDir, img['file_name'])
             imBase = os.path.splitext(img['file_name'])[0]
@@ -125,8 +133,8 @@ with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
             else:
                 yoloAnnPath = os.path.join(targetNegImgDir, imBase + ".txt")
                 targetImg = os.path.join(targetNegImgDir, img['file_name'])
-            shutil.copyfile(srcImg, targetImg)
-            trainListFile.write(os.path.abspath(targetImg)+"\n")
+            #shutil.copyfile(srcImg, targetImg)
+            #trainListFile.write(os.path.abspath(targetImg)+"\n")
 
             with open(yoloAnnPath, "w") as yoloAnnFile:
                 for ann in posAnns:
