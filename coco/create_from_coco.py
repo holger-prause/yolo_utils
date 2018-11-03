@@ -133,8 +133,8 @@ with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
             else:
                 yoloAnnPath = os.path.join(targetNegImgDir, imBase + ".txt")
                 targetImg = os.path.join(targetNegImgDir, img['file_name'])
-            #shutil.copyfile(srcImg, targetImg)
-            #trainListFile.write(os.path.abspath(targetImg)+"\n")
+            shutil.copyfile(srcImg, targetImg)
+            trainListFile.write(os.path.abspath(targetImg)+"\n")
 
             with open(yoloAnnPath, "w") as yoloAnnFile:
                 for ann in posAnns:
