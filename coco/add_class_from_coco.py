@@ -51,6 +51,7 @@ for file in files:
                     img = coco.imgs[imgId]
                     anns = coco.imgToAnns[imgId]
                     posAnns = [ann for ann in anns if ann['category_id'] in catIdsToAdd]
+
                 for ann in posAnns:
                     catId = ann['category_id']
                     catName = coco.cats[catId]['name']
