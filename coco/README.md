@@ -103,7 +103,32 @@ required arguments:
 
 
 
+* **Usage:**
+This lets you add bounding boxes from a coco dataset for specific classes
+to an existing dataset. Handle with care and make a backup before.
+Don't forget to update the labels file for training.
+This script is most useful when building a custom dataset from coco.
 
+```javascript
+usage: add_class_from_coco.py [-h] -a ANNOTATIONFILE -d DATASET -c CLASSES
+                              [CLASSES ...] -i INDEX
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+required arguments:
+  -a ANNOTATIONFILE, --annotationfile ANNOTATIONFILE
+                        Json annotatation file containing categories and
+                        bboxesi.e. instances_val2014.json
+  -d DATASET, --dataset DATASET
+                        Directory that contains the yolo dataset to modiy.
+  -c CLASSES [CLASSES ...], --classes CLASSES [CLASSES ...]
+                        List of space separated classes to add.
+  -i INDEX, --index INDEX
+                        The index on which the classes will be inserted.
+                        Existing classes will be shifted if required.
+
+```
 
 
     

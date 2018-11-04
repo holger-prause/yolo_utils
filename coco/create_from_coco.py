@@ -3,34 +3,18 @@ import sys
 import argparse
 import src.coco as co
 import shutil
+import src.coco_util as cu
 
 
-def convertBBox(img, cocoBbox):
-    # turn bbox into yolo format- bbox center relative to img width and height
-
-    #voc formar x,y,w,h
-    dw = 1. / img['width']
-    dh = 1. / img['height']
-
-    centerX = cocoBbox[0] + cocoBbox[2] / 2.0
-    centerX = centerX * dw
-
-    centerY = cocoBbox[1] + cocoBbox[3] / 2.0
-    centerY = centerY * dh
-
-    rw = cocoBbox[2] * dw
-    rh = cocoBbox[3] * dh
-    return (centerX, centerY, rw, rh)
 
 
-parser = argparse.ArgumentParser()
 parser = argparse.ArgumentParser()
 requiredArguments = parser.add_argument_group("required arguments")
 requiredArguments.add_argument("-a", "--annotationfile", type=str, required=True, help="Json annotatation file containing categories and bboxes"
                                                                                        "i.e. instances_val2014.json")
 requiredArguments.add_argument("-t", "--targetdir", type=str, required=True,
-                    help="Directory that will contain the yolo dataset."
-                         "The directory must not exist and will be created.")
+                               help="Directory that will contain the yolo dataset."
+                                    "The directory must not exist and will be created.")
 
 parser.add_argument("-c", "--classes", nargs='+', default=[],
                     help="List of space separated classes to use. If not specified - all classes in the dataset will be used."
@@ -141,5 +125,5 @@ with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
                     catId = ann['category_id']
                     catName = coco.cats[catId]['name']
                     clIdx = classes.index(catName)
-                    yoloBox = convertBBox(img, ann['bbox'])
+                    yoloBox = cu.convertBBox(img, ann['bbox'])
                     yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')
