@@ -102,12 +102,14 @@ required arguments:
 ```
 
 
-
-* **Usage:**
+### add_class_from_coco.py
 This lets you add bounding boxes from a coco dataset for specific classes
 to an existing dataset. Handle with care and make a backup before.
 Don't forget to update the labels file for training.
 This script is most useful when building a custom dataset from coco.
+
+* **Usage:**
+The following is the help output of the script.
 
 ```javascript
 usage: add_class_from_coco.py [-h] -a ANNOTATIONFILE -d DATASET -c CLASSES

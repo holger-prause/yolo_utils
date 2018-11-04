@@ -5,9 +5,6 @@ import src.coco as co
 import shutil
 import src.coco_util as cu
 
-
-
-
 parser = argparse.ArgumentParser()
 requiredArguments = parser.add_argument_group("required arguments")
 requiredArguments.add_argument("-a", "--annotationfile", type=str, required=True, help="Json annotatation file containing categories and bboxes"
