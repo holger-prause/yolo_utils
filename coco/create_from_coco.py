@@ -22,7 +22,6 @@ parser.add_argument("-i", "--imageidfile", type=str, required=False,
                          "Per default images will be included, using the -e option excludes them.")
 parser.add_argument("-e", "--exclude", action="store_true",
                     help="If specified, images listed in the image id file will be excluded instead of included.")
-
 args = parser.parse_args()
 
 annotationFile = args.annotationfile
@@ -92,8 +91,7 @@ with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
         print("processing %s out of %s images" %(idx+1, len(imgIds)) )
         img = coco.imgs[imgId]
         anns = coco.imgToAnns[imgId]
-
-        posAnns = [ann for ann in anns if ann['category_id'] in catIds]
+        posAnns = [ann for ann in anns if ann['category_id'] in catIds and ann['iscrowd'] == 0]
         negAnns = [ann for ann in anns if ann['category_id'] not in catIds and ann['category_id'] in negCatIds]
         include = len(posAnns) > 0 or len(negAnns) > 0
 
