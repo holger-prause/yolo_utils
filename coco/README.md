@@ -71,9 +71,9 @@ Download the coco datasets and extract them to a folder.
 The following is the help output of the script.
 
 ```javascript
-usage: create_from_coco.py [-h] -a ANNOTATIONFILE -t TARGETDIR
-                           [-c CLASSES [CLASSES ...]] -s SOURCEDIR
-                           [-i IMAGEIDFILE] [-e]
+usage: create_from_coco.py [-h] -a ANNOTATIONFILE -t TARGETDIR -s SOURCEDIR
+                           [-c CLASSES [CLASSES ...]] [-i IMAGEIDFILE] [-e]
+                           [-n]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -82,14 +82,14 @@ optional arguments:
                         specified - all classes in the dataset will be
                         used.See coco_info.py for more details to list the
                         available classes.
-  -s SOURCEDIR, --sourcedir SOURCEDIR
-                        Source coco directory containing the images
   -i IMAGEIDFILE, --imageidfile IMAGEIDFILE
                         File containing image ids in each line.These images
                         will be included or excluded.Per default images will
                         be included, using the -e option excludes them.
   -e, --exclude         If specified, images listed in the image id file will
                         be excluded instead of included.
+  -n, --negatives       If specified, images not containing the classes will
+                        be used as negatives.
 
 required arguments:
   -a ANNOTATIONFILE, --annotationfile ANNOTATIONFILE
@@ -98,7 +98,8 @@ required arguments:
   -t TARGETDIR, --targetdir TARGETDIR
                         Directory that will contain the yolo dataset.The
                         directory must not exist and will be created.
-
+  -s SOURCEDIR, --sourcedir SOURCEDIR
+                        Source coco directory containing the images
 ```
 
 

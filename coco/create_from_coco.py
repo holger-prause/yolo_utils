@@ -12,16 +12,18 @@ requiredArguments.add_argument("-a", "--annotationfile", type=str, required=True
 requiredArguments.add_argument("-t", "--targetdir", type=str, required=True,
                                help="Directory that will contain the yolo dataset."
                                     "The directory must not exist and will be created.")
+requiredArguments.add_argument("-s", "--sourcedir", type=str, required=True, help="Source coco directory containing the images")
 
 parser.add_argument("-c", "--classes", nargs='+', default=[],
                     help="List of space separated classes to use. If not specified - all classes in the dataset will be used."
                          "See coco_info.py for more details to list the available classes.")
-parser.add_argument("-s", "--sourcedir", type=str, required=True, help="Source coco directory containing the images")
 parser.add_argument("-i", "--imageidfile", type=str, required=False,
                     help="File containing image ids in each line.These images will be included or excluded."
                          "Per default images will be included, using the -e option excludes them.")
 parser.add_argument("-e", "--exclude", action="store_true",
                     help="If specified, images listed in the image id file will be excluded instead of included.")
+parser.add_argument("-n", "--negatives", action="store_true",
+                    help="If specified, images not containing the classes will be used as negatives.")
 args = parser.parse_args()
 
 annotationFile = args.annotationfile
@@ -93,7 +95,7 @@ with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
         anns = coco.imgToAnns[imgId]
         posAnns = [ann for ann in anns if ann['category_id'] in catIds and ann['iscrowd'] == 0]
         negAnns = [ann for ann in anns if ann['category_id'] not in catIds and ann['category_id'] in negCatIds]
-        include = len(posAnns) > 0 or len(negAnns) > 0
+        include = len(posAnns) > 0 or (args.negatives and len(negAnns) > 0)
 
         #one of the annotated images has 0 height - deal with it
         invalidBBoxes = [x for x in posAnns if x['bbox'][2] == 0 or x['bbox'][3] == 0]
@@ -109,16 +111,16 @@ with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
             if posAnns:
                 yoloAnnPath = os.path.join(targetPosImgDir, imBase + ".txt")
                 targetImg = os.path.join(targetPosImgDir, img['file_name'])
-            #else:
-                #yoloAnnPath = os.path.join(targetNegImgDir, imBase + ".txt")
-                #targetImg = os.path.join(targetNegImgDir, img['file_name'])
-                shutil.copyfile(srcImg, targetImg)
-                trainListFile.write(os.path.abspath(targetImg)+"\n")
+            else:
+                yoloAnnPath = os.path.join(targetNegImgDir, imBase + ".txt")
+                targetImg = os.path.join(targetNegImgDir, img['file_name'])
+            shutil.copyfile(srcImg, targetImg)
+            trainListFile.write(os.path.abspath(targetImg)+"\n")
 
-                with open(yoloAnnPath, "w") as yoloAnnFile:
-                    for ann in posAnns:
-                        catId = ann['category_id']
-                        catName = coco.cats[catId]['name']
-                        clIdx = classes.index(catName)
-                        yoloBox = cu.convertBBox(img, ann['bbox'])
-                        yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')
+            with open(yoloAnnPath, "w") as yoloAnnFile:
+                for ann in posAnns:
+                    catId = ann['category_id']
+                    catName = coco.cats[catId]['name']
+                    clIdx = classes.index(catName)
+                    yoloBox = cu.convertBBox(img, ann['bbox'])
+                    yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]))
