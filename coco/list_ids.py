@@ -1,6 +1,6 @@
 import argparse
 import json
-import src.coco as co
+import lib.coco as co
 from operator import itemgetter
 from collections import OrderedDict
 

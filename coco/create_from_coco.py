@@ -1,9 +1,9 @@
 import os
 import sys
 import argparse
-import src.coco as co
+import lib.coco as co
 import shutil
-import src.coco_util as cu
+import lib.coco_util as cu
 
 parser = argparse.ArgumentParser()
 requiredArguments = parser.add_argument_group("required arguments")
@@ -109,16 +109,16 @@ with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
             if posAnns:
                 yoloAnnPath = os.path.join(targetPosImgDir, imBase + ".txt")
                 targetImg = os.path.join(targetPosImgDir, img['file_name'])
-            else:
-                yoloAnnPath = os.path.join(targetNegImgDir, imBase + ".txt")
-                targetImg = os.path.join(targetNegImgDir, img['file_name'])
-            shutil.copyfile(srcImg, targetImg)
-            trainListFile.write(os.path.abspath(targetImg)+"\n")
+            #else:
+                #yoloAnnPath = os.path.join(targetNegImgDir, imBase + ".txt")
+                #targetImg = os.path.join(targetNegImgDir, img['file_name'])
+                shutil.copyfile(srcImg, targetImg)
+                trainListFile.write(os.path.abspath(targetImg)+"\n")
 
-            with open(yoloAnnPath, "w") as yoloAnnFile:
-                for ann in posAnns:
-                    catId = ann['category_id']
-                    catName = coco.cats[catId]['name']
-                    clIdx = classes.index(catName)
-                    yoloBox = cu.convertBBox(img, ann['bbox'])
-                    yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')
+                with open(yoloAnnPath, "w") as yoloAnnFile:
+                    for ann in posAnns:
+                        catId = ann['category_id']
+                        catName = coco.cats[catId]['name']
+                        clIdx = classes.index(catName)
+                        yoloBox = cu.convertBBox(img, ann['bbox'])
+                        yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')

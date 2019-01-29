@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 import json
-import src.coco as co
+import lib.coco as co
 
 
 parser = argparse.ArgumentParser()

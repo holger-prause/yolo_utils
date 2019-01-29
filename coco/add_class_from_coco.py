@@ -1,7 +1,7 @@
 import os
 import argparse
-import src.coco as co
-import src.coco_util as cu
+import lib.coco as co
+import lib.coco_util as cu
 
 parser = argparse.ArgumentParser()
 requiredArguments = parser.add_argument_group("required arguments")
