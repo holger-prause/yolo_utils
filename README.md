@@ -59,3 +59,30 @@ required arguments:
 ```
     
 
+### merge_dataset.py
+This merges two datasets. Source classes not contained in the target set will be appended.
+Existing classes will keep their index. The target classes file will be rewritten 
+and contain the new classes(if their are any)
+
+* **Usage:**
+The following is the help output of the script.
+
+```javascript
+usage: merge_dataset.py [-h] -s SOURCEDIR -t TARGETDIR -sc SOURCECLASSES -tc
+                        TARGETCLASSES
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+required arguments:
+  -s SOURCEDIR, --sourcedir SOURCEDIR
+                        Directory containing the source annotations/images
+  -t TARGETDIR, --targetdir TARGETDIR
+                        Directory containing the target annotations/images
+  -sc SOURCECLASSES, --sourceclasses SOURCECLASSES
+                        File containing the classes/labels for the source
+                        annotations
+  -tc TARGETCLASSES, --targetclasses TARGETCLASSES
+                        File containing the classes/labels for the target
+                        annotations
+```
