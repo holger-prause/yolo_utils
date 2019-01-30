@@ -123,4 +123,4 @@ with open(os.path.join(targetDir, "train.txt"),"w") as trainListFile:
                     catName = coco.cats[catId]['name']
                     clIdx = classes.index(catName)
                     yoloBox = cu.convertBBox(img, ann['bbox'])
-                    yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]))
+                    yoloAnnFile.write(str(clIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')
