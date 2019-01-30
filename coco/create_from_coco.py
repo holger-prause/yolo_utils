@@ -43,7 +43,7 @@ targetPosImgDir = os.path.join(targetImgDir, 'positives')
 targetNegImgDir = os.path.join(targetImgDir, 'negatives')
 
 if (not os.path.exists(targetDir)):
-    os.mkdir(targetDir)
+    os.makedirs(targetDir)
 if (not os.path.exists(targetImgDir)):
     os.mkdir(targetImgDir)
 if (not os.path.exists(targetPosImgDir)):
