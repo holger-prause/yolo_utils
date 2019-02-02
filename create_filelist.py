@@ -9,11 +9,14 @@ requiredArguments.add_argument("-o", "--outfile", type=str, required=True, help=
 args = parser.parse_args()
 
 imgs = []
-imgPattern = ["*.jpg", "*.jpeg", "*.png", "*.JPG", "*.JPEG", "*.PNG"]
-for imp in imgPattern:
-    pattern = args.dir+"/**/"+imp
-    for img in glob.glob(pattern, recursive=True):
-        imgs.append(os.path.abspath(img))
+imgExts = [".jpg", ".jpeg", ".png"]
+for root, directories, filenames in os.walk(args.dir):
+    for filename in filenames:
+        basename = os.path.basename(filename)
+        split = os.path.splitext(basename)
+        if(len(split) > 1):
+            if split[1].lower() in imgExts:
+                imgs.append(os.path.abspath(filename))
 
 with open(args.outfile, 'w') as outFile:
     for img in imgs:
