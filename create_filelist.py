@@ -21,9 +21,10 @@ for root, directories, filenames in os.walk(args.dir):
 
 with open(args.outfile, 'w') as outFile:
     for img in imgs:
-        parent = os.path.join(img, os.pardir)
+        parent = os.path.abspath(os.path.join(img, os.pardir))
         imgbase = os.path.splitext(os.path.basename(img))[0]
         annFile = os.path.join(parent, imgbase+".txt")
+        print(annFile)
         if(os.path.isfile(annFile)):
             outFile.write(img+"\n")
 
