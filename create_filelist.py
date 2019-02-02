@@ -24,7 +24,6 @@ with open(args.outfile, 'w') as outFile:
         parent = os.path.abspath(os.path.join(img, os.pardir))
         imgbase = os.path.splitext(os.path.basename(img))[0]
         annFile = os.path.join(parent, imgbase+".txt")
-        print(annFile)
         if(os.path.isfile(annFile)):
             outFile.write(img+"\n")
 
