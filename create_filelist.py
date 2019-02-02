@@ -16,7 +16,8 @@ for root, directories, filenames in os.walk(args.dir):
         split = os.path.splitext(basename)
         if(len(split) > 1):
             if split[1].lower() in imgExts:
-                imgs.append(os.path.abspath(filename))
+                path = os.path.join(root, filename);
+                imgs.append(os.path.abspath(path))
 
 with open(args.outfile, 'w') as outFile:
     for img in imgs:
