@@ -10,8 +10,7 @@ requiredArguments = parser.add_argument_group("required arguments")
 requiredArguments.add_argument("-a", "--annotationfile", type=str, required=True, help="Json annotatation file containing categories and bboxes"
                                                                                        "i.e. instances_val2014.json")
 requiredArguments.add_argument("-t", "--targetdir", type=str, required=True,
-                               help="Directory that will contain the yolo dataset."
-                                    "The directory must not exist and will be created.")
+                               help="Directory that will contain the yolo dataset.")
 requiredArguments.add_argument("-s", "--sourcedir", type=str, required=True, help="Source coco directory containing the images")
 
 parser.add_argument("-c", "--classes", nargs='+', default=[],
