@@ -34,10 +34,8 @@ with open(args.urlfile, encoding="utf8", newline='') as csvfile:
             urllib.request.urlretrieve(url, dlPath)
             print("downloading from url: {0}".format(url))
             try:
-                im = Image.open(dlPath)
-                im.close()
-                # do stuff
+                with Image.open(dlPath) as im:
+                    im.close
             except IOError:
-                os.remove(dlPath)
-                # filename not an image file
                 print("corrupt download image for url {0}".format(url))
+                os.remove(dlPath)
