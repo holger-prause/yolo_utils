@@ -22,8 +22,8 @@ if (not os.path.exists(annotationFile)):
 
 imgIds = set()
 with open(annotationFile, encoding="utf8", newline='') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',')
-    for row in spamreader:
+    csvReader = csv.reader(csvfile, delimiter=',')
+    for row in csvReader:
         labelName = row[2]
         imgId = row[0]
         if labelName in classes:
