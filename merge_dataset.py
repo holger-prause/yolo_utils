@@ -33,7 +33,7 @@ mergedClasses.extend(srcClsDiff)
 targetAnns = glob.iglob(annTargetDir + '/*.txt')
 targetAnns = [os.path.basename(x) for x in targetAnns]
 
-imgs = dict()
+srcImgs = dict()
 imgPattern = ["*.jpg", "*.jpeg", "*.png", "*.JPG", "*.JPEG", "*.PNG"]
 for imp in imgPattern:
     pattern = annSourceDir+"/"+imp
@@ -41,7 +41,7 @@ for imp in imgPattern:
     for img in glob.iglob(pattern):
         imgId = os.path.basename(img)
         imgId = os.path.splitext(imgId)[0]
-        imgs[imgId] = os.path.basename(img)
+        srcImgs[imgId] = os.path.basename(img)
 
 #take care of line ending stuff
 def appendToFile(path, content):
@@ -81,9 +81,9 @@ for srcAnn in glob.iglob(annSourceDir+'/*.txt'):
         writeAnnotation(srcAnn, targetAnn)
 
     #unknown annotation but with corresponding image - merge it
-    elif(srcAnnId in imgs):
-        srcImg = os.path.join(annSourceDir, imgs[srcAnnId])
-        targetImg = os.path.join(annTargetDir, imgs[srcAnnId])
+    elif(srcAnnId in srcImgs):
+        srcImg = os.path.join(annSourceDir, srcImgs[srcAnnId])
+        targetImg = os.path.join(annTargetDir, srcImgs[srcAnnId])
         shutil.copyfile(srcImg, targetImg)
         writeAnnotation(srcAnn, targetAnn)
     else:
