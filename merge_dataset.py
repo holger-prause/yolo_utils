@@ -89,7 +89,4 @@ for srcAnn in glob.iglob(annSourceDir+'/*.txt'):
     else:
         print("No matching src image or target annotation found for %s - skipping." % (srcAnnFileName))
 
-with open(os.path.join(annTargetDir, "classes_merged.txt"), "w") as cmf:
-    cmf.write("\n".join(mergedClasses))
-
 appendToFile(args.targetclasses,srcClsDiff)
