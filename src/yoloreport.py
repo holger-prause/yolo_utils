@@ -1,8 +1,10 @@
 import pandas as pd
+import numpy as np
 
 class YoloReport:
-    def __init__(self, classes):
+    def __init__(self, classes, filterClasses):
         self.classes = classes
+        self.filterClasses = filterClasses
         self.data = []
 
         columns = ['imageid']
@@ -22,13 +24,7 @@ class YoloReport:
 
     def printReport(self, showImgIds):
         df = pd.DataFrame(data=self.data, columns=self.columns)
-        imgCount = df.imageid.nunique()
-        imgIds = df.imageid.unique()
-
-        if(showImgIds):
-            for imgId in imgIds:
-                print(imgId)
-            return
+        totalImages = df.imageid.nunique()
 
         groupByImage = df.groupby(['imageid']).sum()
         summaryColumns = ['Class', 'Nr.Images', 'Nr.Object', '%Image', '%Object']
@@ -39,15 +35,25 @@ class YoloReport:
             totalObjects = totalObjects + groupByImage[cls].sum()
 
         summaryData = []
-        for cls in self.classes:
+        imgIds = []
+        for cls in self.filterClasses:
+            #get all images for class
             filterRows = groupByImage.loc[groupByImage[cls] > 0]
-            imgsPerClass = len(filterRows.index)
+            imgIdsForClass = filterRows.index.tolist()
+            imgIds.extend(imgIdsForClass)
+
+            imgsPerClass = len(imgIdsForClass)
             objectsPerClass = groupByImage[cls].sum()
-            percentageImage = (100 * imgsPerClass) / imgCount
+            percentageImage = (100 * imgsPerClass) / totalImages
             percentageObjects = (100 * objectsPerClass) / totalObjects
             row = [cls, imgsPerClass, objectsPerClass, percentageImage, percentageObjects]
             summaryData.append(row)
 
         summary = pd.DataFrame(data=summaryData, columns=summaryColumns)
         summary.sort_values(by=['Nr.Images'], inplace=True, ascending=False)
-        print(summary.to_string())
+        if(showImgIds):
+            for imgId in imgIds:
+                print(imgId)
+        else:
+            print("total images: {0} ; total objects: {1}".format(totalImages, totalObjects))
+            print(summary.to_string())
