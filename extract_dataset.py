@@ -6,6 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--imagepathfile", type=str, required=True, help="File containing the image paths")
 parser.add_argument("-t", "--targetdir", type=str, required=True, help="Dir where to copy the images and their annotations"
                                                                        "will be created of does not exists")
+parser.add_argument("-m", "--move", action="store_true", help="If specified images and annotation will be moved instead of copied")
 args = parser.parse_args()
 
 paths = []
@@ -24,6 +25,12 @@ for p in paths:
     if(os.path.isfile(annFile)):
         targetAnnFile = os.path.join(args.targetdir, os.path.basename(annFile))
         shutil.copyfile(annFile, targetAnnFile)
+
+        if(args.move):
+            os.remove(annFile)
+
     if(os.path.isfile(p)):
         targetImg = os.path.join(args.targetdir, os.path.basename(p))
         shutil.copyfile(p, targetImg)
+        if(args.move):
+            os.remove(p)
