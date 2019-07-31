@@ -5,3 +5,5 @@
 *.iml
 *.ipr
 data
+.pydevproject
+**/__pycache__
