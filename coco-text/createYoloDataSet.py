@@ -4,6 +4,14 @@ import sys
 import coco_text
 import argparse
 
+
+def isValidAnnotation(ann):
+    labelName = ann['class'] + " " + ann['legibility'];
+    if(labelName in labels and ann['area'] >= 10):
+        return True
+
+    return False
+
 def convertBBox(img, cocoBbox):
     # turn bbox into yolo format- bbox center relative to img width and height
     #voc formar x,y,w,h
@@ -32,8 +40,7 @@ def writeAnnotations(yoloAnnPath, img, anns):
             yoloAnnFile.write(str(classIdx) + " " + " ".join([str(a) for a in yoloBox]) + '\n')
             
 def createDataSet(imgIds, imgDataFile, targetImgDir):    
-    srcImgDir = args.imagedir;    
-    
+    srcImgDir = args.imagedir
     with open(imgDataFile, 'w') as imgDataFileH:
         for idx, imgId in enumerate(imgIds):
             print("processing ", idx+1, " out of ", len(imgIds))
@@ -44,16 +51,18 @@ def createDataSet(imgIds, imgDataFile, targetImgDir):
                 
             annIds = ct.imgToAnns[imgId]
             anns = ct.loadAnns(annIds)
-            if(len(anns) > 0):
+            filteredAnns = [x for x in anns if isValidAnnotation(x)]
+
+            #dont included images where we filtered out bounding boxes
+            if(len(filteredAnns) > 0 and len(anns) == len(filteredAnns)):
                 targetImg = os.path.join(targetImgDir, imgFileName) 
                 targetAnn = os.path.join(targetImgDir, annotationFileName)
                 shutil.copyfile(srcImg, targetImg)
-                writeAnnotations(targetAnn, img, anns);    
+                writeAnnotations(targetAnn, img, filteredAnns);
                 imgDataFileH.write(targetImg + "\n")    
-    
-    
-        
-        
+
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-a", "--annotationfile", type=str, required=True, help="Json annotatation file containing categories and bboxes"
                                                                                        "i.e. COCO_Text.json")
@@ -67,8 +76,7 @@ ct = coco_text.COCO_Text(args.annotationfile)
 ct.info()
 
 #in contrast to other coco scripts i don't feel like it should be possible to specify labels to use for now
-labels = ["machine printed legible", "machine printed illegible", "handwritten legible", 
-           "handwritten illegible", "others legible", "others illegible"]
+labels = ["machine printed legible", "machine printed illegible"]
 dsTypes = ["train", "valid"]
 
 if (not os.path.exists(args.targetdir)):
@@ -106,12 +114,3 @@ with open(os.path.join(args.targetdir, "coco_text.data"), 'w') as dataFile:
         createDataSet(imgIds, imgDataFile, targetImgDir)    
 
         
-        
-
-
-
-#print("annotationFileName size: ", len(anns))
-
-
-#dataDir='../../../Desktop/MSCOCO/data'
-#dataType='train2014'
