@@ -93,7 +93,7 @@ def main():
     with open(configFilePath) as configFile:
         configLines = configFile.readlines()
         for line in configLines:
-            splittedLine = line.split(":", 1)
+            splittedLine = line.split("=", 1)
             key = splittedLine[0].strip()
             value = splittedLine[1].strip()
             config[key] = value
@@ -103,18 +103,19 @@ def main():
         labels = labelFile.read().splitlines()
 
     trainImages = []
-    with open(getPath(config["train"], configFileRootPath)) as trainFile:
-        trainImages = trainFile.read().splitlines()
+    
+    if("train" in config):
+        with open(getPath(config["train"], configFileRootPath)) as trainFile:
+            trainImages = trainFile.read().splitlines()
+            for img in trainImages:
+                verifyImage(getPath(img, configFileRootPath), showBbox, labels, logs)
 
-    validationImages = []
-    with open(getPath(config["valid"], configFileRootPath)) as validationFile:
-        validationImages = validationFile.read().splitlines()
-
-    for img in trainImages:
-        verifyImage(getPath(img, configFileRootPath), showBbox, labels, logs)
-
-    for img in validationImages:
-        verifyImage(getPath(img, configFileRootPath), showBbox, labels, logs)
+    if("valid" in config):
+        validationImages = []
+        with open(getPath(config["valid"], configFileRootPath)) as validationFile:
+            validationImages = validationFile.read().splitlines()
+            for img in validationImages:
+                verifyImage(getPath(img, configFileRootPath), showBbox, labels, logs)
 
     logs = "\n".join(logs)
     if(logFile != None):
