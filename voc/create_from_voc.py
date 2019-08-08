@@ -63,7 +63,7 @@ def createVocDataSet(vocDir, targetDir, vocLabels,  filterImIds, excludeIms, ski
                         bb = yci["bbox"]
                         targetAnnotationFile.write(str(labelIdx) + " " + " ".join([str(a) for a in bb]) + '\n')
                 shutil.copyfile(srcImg, targetImg)
-                if (image_set == "val"):
+                if (image_set == "test"):
                     validationListFile.write(os.path.abspath(targetImg) + "\n")
                 else:
                     trainListFile.write(os.path.abspath(targetImg) + "\n")
