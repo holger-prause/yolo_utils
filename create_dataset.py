@@ -12,7 +12,7 @@ args = parser.parse_args()
 classes = []
 with open(args.labelsfile) as lblFile:
     classes = lblFile.readlines()
-    classes = [x for x in classes if x.strip()]
+    classes = [x.strip() for x in classes if x.strip()]
 
 targetDir = args.targetdir
 if (not os.path.exists(targetDir)):
@@ -44,9 +44,9 @@ if (not os.path.exists(backupDir)):
     
 classesFile =  os.path.join(targetDir, "train.names");
 if(os.path.abspath(classesFile) != os.path.abspath(args.labelsfile)):
-    with open(classesFile, "w") as classesFile:
+    with open(classesFile, "w") as cF:
         line = "\n".join(classes)
-        classesFile.write(line)
+        cF.write(line)
     
 with open(os.path.join(targetDir, "train.data"), 'w') as dataFile:
     dataFile.write("classes = "+str(len(classes))+ "\n")        
