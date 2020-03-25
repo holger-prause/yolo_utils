@@ -13,7 +13,7 @@ def convertBBox(size, box):
     h = h * dh
     return (x, y, w, h)
 
-def getYoloClassInfo(vocAnnotationFilePath, vocLabels):
+def getVocClassInfo(vocAnnotationFilePath, filterClasses):
     classInfo = []
     with open(vocAnnotationFilePath) as vocAnnotationFile:
         tree = ET.parse(vocAnnotationFile)
@@ -29,7 +29,7 @@ def getYoloClassInfo(vocAnnotationFilePath, vocLabels):
                 continue
 
             cls = obj.find('name').text
-            if(cls in vocLabels):
+            if(cls in filterClasses or len(filterClasses) == 0):
                 xmlbox = obj.find('bndbox')
                 b = (float(xmlbox.find('xmin').text), float(xmlbox.find('xmax').text), float(xmlbox.find('ymin').text),
                      float(xmlbox.find('ymax').text))

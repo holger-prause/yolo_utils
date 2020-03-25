@@ -67,6 +67,30 @@ required arguments:
 
 
 
+### convertToYolo.py
+This script converts from the voc to the yolo format.
+
+* **Usage:**
+The following is the help output of the script.
+
+```javascript
+usage: convertToYolo.py [-h] -v VOCDIR -t TARGET [-c CLASSESFILE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CLASSESFILE, --classesfile CLASSESFILE
+                        File containing the classes to convert. If not
+                        specified - all voc classes will be converted in a new
+                        file "classes.txt" in the target directory
+
+required arguments:
+  -v VOCDIR, --vocdir VOCDIR
+                        Directory containing the voc annotations
+  -t TARGET, --target TARGET
+                        The directory that will contain the yolo annotations
+```
+    
+    
 
     
     

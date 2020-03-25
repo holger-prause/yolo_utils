@@ -42,7 +42,7 @@ def main():
                 imgIds = statsFile.read().strip().split()
                 for imgId in imgIds:
                     annotationFilePath = (vocInPart + "/Annotations/%s.xml") % (vocDir, year, imgId)
-                    classInfo = vu.getYoloClassInfo(annotationFilePath, imageLabels)
+                    classInfo = vu.getVocClassInfo(annotationFilePath, imageLabels)
                     if(len(classInfo) > 0):
                         imageIds.append(imgId)
         print("\n".join(imageIds))

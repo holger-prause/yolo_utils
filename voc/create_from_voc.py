@@ -55,7 +55,7 @@ def createVocDataSet(vocDir, targetDir, vocLabels,  filterImIds, excludeIms, ski
             targetAnnotation = '%s/%s.txt' % (imgOutDir, imgId)
 
             #get the matching bounding boxes for the specified classes/labels
-            yoloClassInfos = vu.getYoloClassInfo(srcAnnotation, vocLabels)
+            yoloClassInfos = vu.getVocClassInfo(srcAnnotation, vocLabels)
             if(not skipNegatives or len(yoloClassInfos) > 0):
                 with open(targetAnnotation, "w") as targetAnnotationFile:
                     for yci in yoloClassInfos:
