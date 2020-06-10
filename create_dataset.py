@@ -33,7 +33,7 @@ def collectAnnotatedImgs(imgDir):
                     imgPath = os.path.join(root, filename)
                     annPath = os.path.join(root, basenameNoExt+".txt")
                     if(os.path.isfile(annPath)):
-                        annotatedImgs.append(imgPath)
+                        annotatedImgs.append(os.path.abspath(imgPath))
     return annotatedImgs
 
 trainImgs = collectAnnotatedImgs(args.sourcedir);
