@@ -58,7 +58,6 @@ required arguments:
                         The class start index
 ```
     
-
 ### merge_dataset.py
 This merges two datasets. Source classes not contained in the target set will be appended.
 Existing classes will keep their index. The target classes file will be rewritten 
@@ -86,3 +85,59 @@ required arguments:
                         File containing the classes/labels for the target
                         annotations
 ```
+
+### clean_annotations.py
+Cleans up a yolo dataset, removes duplicate boxes or boxes which are out of the screen.
+It also attempts to repair boxes which are just slightly out of screen but could fit otherwise.
+Boxes smaller than 1px in width or height will also be removed. Its possible to filter based
+on width and height of boxes too.
+
+* **Usage:**
+The following is the help output of the script.
+
+```javascript
+usage: clean_annotations.py [-h] -s SOURCEDIR [-mw MINWIDTH] [-mh MINHEIGHT]
+                            [-dr DOREVIEW]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SOURCEDIR, --sourcedir SOURCEDIR
+                        Directory containing the annotations/images
+  -mw MINWIDTH, --minwidth MINWIDTH
+                        The minimum width a bounding box must have, default is
+                        1px
+  -mh MINHEIGHT, --minheight MINHEIGHT
+                        The minimum height a bounding box must have, default
+                        is 1px
+  -dr DOREVIEW, --doreview DOREVIEW
+                        If set to false, the cleanup operation will be applied
+                        directly on the source folder - not recommended
+```
+
+
+
+### create_dataset.py
+Creates a yolo dataset ready to train. The images must already be annotated.
+It will also create automatically a validation dataset with 10 percent of the train images.
+
+* **Usage:**
+The following is the help output of the script.
+
+```javascript
+usage: create_dataset.py [-h] -s SOURCEDIR -t TARGETDIR -l LABELSFILE
+                         [-v VALIDATIONDIR]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SOURCEDIR, --sourcedir SOURCEDIR
+                        Directory containing the annotations and images
+  -t TARGETDIR, --targetdir TARGETDIR
+                        The direcectory which will contain the yolo dataset
+  -l LABELSFILE, --labelsfile LABELSFILE
+                        File containing the label
+  -v VALIDATIONDIR, --validationdir VALIDATIONDIR
+                        Directory containing the validation annotations and
+                        images If not specified, 10 percent of the train
+                        images will be used.
+```
+
