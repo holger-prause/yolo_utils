@@ -90,7 +90,8 @@ required arguments:
 Cleans up a yolo dataset, removes duplicate boxes or boxes which are out of the screen.
 It also attempts to repair boxes which are just slightly out of screen but could fit otherwise.
 Boxes smaller than 1px in width or height will also be removed. Its possible to filter based
-on width and height of boxes too.
+on width and height of boxes too. The repaired annotations will be in a subfolder 
+of the source dir with the name "review".
 
 * **Usage:**
 The following is the help output of the script.
@@ -119,7 +120,6 @@ optional arguments:
 ### create_dataset.py
 Creates a yolo dataset ready to train. The images must already be annotated.
 It will also create automatically a validation dataset with 10 percent of the train images.
-The repaired annotations will be in a subfolder of the source dir with the name "review".
 
 * **Usage:**
 The following is the help output of the script.
