@@ -43,7 +43,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--sourcedir", type=str, required=True, help="Directory containing the annotations/images")
 parser.add_argument("-mw", "--minwidth", type=int, required=False, default=1, help="The minimum width a bounding box must have, default is 1px", )
 parser.add_argument("-mh", "--minheight", type=int, required=False, default=1, help="The minimum height a bounding box must have, default is 1px")
-parser.add_argument("-dr", "--doreview", type=bool, required=False, default=True, help="If set to false, the cleanup operation will be applied directly"
+parser.add_argument("-sr", "--skipreview", required=False, action="store_true", default=False, help="If flag is specified, the cleanup operation will be applied directly"
                                                                                         " on the source folder - not recommended")
 
 args = parser.parse_args()
@@ -142,14 +142,14 @@ for f in files:
 if(len(problemUnits) > 0):
     print("Found {} annotations with at least one error".format(len(problemUnits)))                    
     
-    if(args.doreview):                  
+    if(not args.skipreview):                  
         reviewDir = os.path.join(args.sourcedir, "review")
         if (not os.path.exists(reviewDir)):
             os.makedirs(reviewDir)
     
     for pU in problemUnits:
         targetAnn = pU.fullAnnPath
-        if(args.doreview):
+        if(not args.skipreview):
             targetImg = os.path.join(reviewDir, os.path.basename(pU.fullImgPath));
             shutil.copy(pU.fullImgPath, targetImg);
             targetAnn = os.path.join(reviewDir, os.path.basename(pU.fullAnnPath));

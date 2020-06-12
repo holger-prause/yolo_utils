@@ -98,7 +98,7 @@ The following is the help output of the script.
 
 ```javascript
 usage: clean_annotations.py [-h] -s SOURCEDIR [-mw MINWIDTH] [-mh MINHEIGHT]
-                            [-dr DOREVIEW]
+                            [-sr]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -110,9 +110,9 @@ optional arguments:
   -mh MINHEIGHT, --minheight MINHEIGHT
                         The minimum height a bounding box must have, default
                         is 1px
-  -dr DOREVIEW, --doreview DOREVIEW
-                        If set to false, the cleanup operation will be applied
-                        directly on the source folder - not recommended
+  -sr, --skipreview     If flag is specified, the cleanup operation will be
+                        applied directly on the source folder - not
+                        recommended
 ```
 
 
