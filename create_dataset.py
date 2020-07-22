@@ -4,9 +4,10 @@ import argparse
 import random
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-s", "--sourcedir", type=str, required=True, help="Directory containing the annotations and images")
-parser.add_argument("-t", "--targetdir", type=str, required=True, help="The direcectory which will contain the yolo dataset")
-parser.add_argument("-l", "--labelsfile", type=str, required=True, help="File containing the label")
+requiredArguments = parser.add_argument_group("required arguments")
+requiredArguments.add_argument("-s", "--sourcedir", type=str, required=True, help="Directory containing the annotations and images")
+requiredArguments.add_argument("-t", "--targetdir", type=str, required=True, help="The direcectory which will contain the yolo dataset")
+requiredArguments.add_argument("-l", "--labelsfile", type=str, required=True, help="File containing the label")
 parser.add_argument("-v", "--validationdir", type=str, required=False, help="Directory containing the validation annotations and images"                                                                 
                     + " If not specified, 10 percent of the train images will be used.")
 args = parser.parse_args()
@@ -43,6 +44,7 @@ trainFile = os.path.join(targetDir, "train.txt");
 valImgs = []
 if(args.validationdir):
    valImgs = collectAnnotatedImgs(args.validationdir);
+   trainImgs = [x for x in trainImgs if x not in valImgs]
 else:
     amounntValImg = int(len(trainImgs) / 10)
     if(amounntValImg) < len(trainImgs):        
