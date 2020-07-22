@@ -97,7 +97,8 @@ optional arguments:
 
 ### create_dataset.py
 Creates a yolo dataset ready to train. The images must already be annotated.
-It will also create automatically a validation dataset with 10 percent of the train images.
+It will also create automatically a validation dataset with 10 percent of the train images if no validation
+directory was specified.
 
 * **Usage:**
 The following is the help output of the script.
