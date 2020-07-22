@@ -44,8 +44,17 @@ class YoloReport:
 
             imgsPerClass = len(imgIdsForClass)
             objectsPerClass = groupByImage[cls].sum()
-            percentageImage = (100 * imgsPerClass) / totalImages
-            percentageObjects = (100 * objectsPerClass) / totalObjects
+            
+            if(totalImages > 0):
+                percentageImage = (100 * imgsPerClass) / totalImages
+            else:
+                percentageImage = 0
+            
+            if(totalObjects > 0):
+                percentageObjects = (100 * objectsPerClass) / totalObjects
+            else: 
+                percentageObjects = 0
+            
             row = [cls, imgsPerClass, objectsPerClass, percentageImage, percentageObjects]
             summaryData.append(row)
 
