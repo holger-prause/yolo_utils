@@ -6,7 +6,7 @@ which allows you to specify the classes to use.
 
 This project is mainly for myself.
 
-## Requirments
+## Requirements
 * Opencv and numpy for reading in the bounding boxes.
 
   These dependencies can be installed with pip install -r requirements.txt
@@ -36,32 +36,11 @@ optional arguments:
                         default value
 ```
 
-### add_class.py
-Allows you to shift the index in the annotation files. Usefull when adding a new class.
-
-
-* **Usage:**
-The following is the help output of the script.
-
-```javascript
-usage: add_class.py [-h] -d DIR -a AMOUNT -i INDEX
-
-optional arguments:
-  -h, --help            show this help message and exit
-
-required arguments:
-  -d DIR, --dir DIR     Directory containing the images and annotation
-  -a AMOUNT, --amount AMOUNT
-                        How many classes to add. This will shift all indices
-                        starting at the start index with the given amount.
-  -i INDEX, --index INDEX
-                        The class start index
-```
     
 ### merge_dataset.py
 This merges two datasets. Source classes not contained in the target set will be appended.
 Existing classes will keep their index. The target classes file will be rewritten 
-and contain the new classes(if their are any)
+and contain the new classes(if there are any)
 
 * **Usage:**
 The following is the help output of the script.
@@ -116,7 +95,6 @@ optional arguments:
 ```
 
 
-
 ### create_dataset.py
 Creates a yolo dataset ready to train. The images must already be annotated.
 It will also create automatically a validation dataset with 10 percent of the train images.
@@ -130,15 +108,68 @@ usage: create_dataset.py [-h] -s SOURCEDIR -t TARGETDIR -l LABELSFILE
 
 optional arguments:
   -h, --help            show this help message and exit
+  -v VALIDATIONDIR, --validationdir VALIDATIONDIR
+                        Directory containing the validation annotations and
+                        images If not specified, 10 percent of the train
+                        images will be used.
+
+required arguments:
   -s SOURCEDIR, --sourcedir SOURCEDIR
                         Directory containing the annotations and images
   -t TARGETDIR, --targetdir TARGETDIR
                         The direcectory which will contain the yolo dataset
   -l LABELSFILE, --labelsfile LABELSFILE
                         File containing the label
-  -v VALIDATIONDIR, --validationdir VALIDATIONDIR
-                        Directory containing the validation annotations and
-                        images If not specified, 10 percent of the train
-                        images will be used.
 ```
 
+
+### modify_dataset.py
+Modifies a dataset by analyzing the source and target labels and modifying the annotations accordingly. 
+Class indices will be updated and entries which are no longer present in the target label file will be removed.
+**HANDLE WITH CARE - THIS CAN DESTROY YOUR DATASET IF LABELS ARE OUTDATED OR WRONG - BACKUP FIRST - YOU HAVE BEEN WARNED!!!**
+
+
+* **Usage:**
+The following is the help output of the script.
+
+```javascript
+usage: modify_dataset.py [-h] -s SOURCEDIR -sc SOURCECLASSES -tc TARGETCLASSES
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+required arguments:
+  -s SOURCEDIR, --sourcedir SOURCEDIR
+                        Source directory containing the images and annotation
+  -sc SOURCECLASSES, --sourceclasses SOURCECLASSES
+                        File containing the classes/labels for the source(old)
+                        annotations
+  -tc TARGETCLASSES, --targetclasses TARGETCLASSES
+                        File containing the classes/labels for the target(new)
+                        annotations
+```
+
+### yolo_info.py
+Analyzes your yolo dataset and gives insight about class distribution. 
+This is useful when balancing a dataset or checking previous modifications.
+
+* **Usage:**
+The following is the help output of the script.
+
+```javascript
+usage: yolo_info.py [-h] -s SOURCEDIR -c CLASSESFILE [-f FILTERCLASSESFILE]
+                    [-i]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f FILTERCLASSESFILE, --filterclassesfile FILTERCLASSESFILE
+                        File containing the classes to filter
+  -i, --imagepath       If specified, the image paths are printed instead of
+                        the summary
+
+required arguments:
+  -s SOURCEDIR, --sourcedir SOURCEDIR
+                        Directory containing the images and annotations
+  -c CLASSESFILE, --classesfile CLASSESFILE
+                        File containing all classes for the dataset
+```
