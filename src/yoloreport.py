@@ -35,12 +35,12 @@ class YoloReport:
             totalObjects = totalObjects + groupByImage[cls].sum()
 
         summaryData = []
-        imgIds = []
+        imgIds = set()
         for cls in self.filterClasses:
             #get all images for class
             filterRows = groupByImage.loc[groupByImage[cls] > 0]
             imgIdsForClass = filterRows.index.tolist()
-            imgIds.extend(imgIdsForClass)
+            imgIds.update(imgIdsForClass)
 
             imgsPerClass = len(imgIdsForClass)
             objectsPerClass = groupByImage[cls].sum()
