@@ -48,7 +48,7 @@ if(args.validationdir):
 else:
     amounntValImg = int(len(trainImgs) / 10)
     if(amounntValImg) < len(trainImgs):    
-        trainImgs.shuffle()
+        random.shuffle(trainImgs)
         for i in range(amounntValImg):
             valImgs.append(trainImgs.pop(i))
       
