@@ -47,9 +47,10 @@ if(args.validationdir):
    trainImgs = [x for x in trainImgs if x not in valImgs]
 else:
     amounntValImg = int(len(trainImgs) / 10)
-    if(amounntValImg) < len(trainImgs):        
-        valImgs = random.sample(trainImgs, k=amounntValImg)
-        trainImgs = [x for x in trainImgs if x not in valImgs]
+    if(amounntValImg) < len(trainImgs):    
+        trainImgs.shuffle()
+        for i in range(amounntValImg):
+            valImgs.append(trainImgs.pop(i))
       
 with open(trainFile, 'w') as outFile:
     for img in trainImgs:
